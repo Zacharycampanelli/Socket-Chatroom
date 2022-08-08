@@ -1,6 +1,17 @@
 const chatForm = document.getElementById('chat-form');
-const chatMessages = document.querySelector('.chat-messages')
+const chatMessages = document.querySelector('.chat-messages');
+
+// Get username and room from URL via qs
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+});
+
+console.log(username, room);
+
 const socket = io();
+
+// Join chatroom
+socket.emit('joinRoom', { username, room });
 
 // Message from server
 socket.on('message', (message) => {
@@ -8,7 +19,7 @@ socket.on('message', (message) => {
   outputMessage(message);
 
   // Scroll down
-  chatMessages.scrollTop = chatMessages.scrollHeight
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
 // Message submit
@@ -22,8 +33,8 @@ chatForm.addEventListener('submit', (e) => {
   socket.emit('chatMessage', msg);
 
   // Clear input
-  e.target.elements.msg.value = ''
-  e.target.elements.msg.focus()
+  e.target.elements.msg.value = '';
+  e.target.elements.msg.focus();
 });
 
 // Output message to DOM
@@ -34,5 +45,5 @@ function outputMessage(message) {
   <p class="text">
     ${message.text}
   </p>`;
-  document.querySelector('.chat-messages').appendChild(div)
+  document.querySelector('.chat-messages').appendChild(div);
 }
